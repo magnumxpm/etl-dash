@@ -58,25 +58,17 @@ export class DatabaseService {
       avg_review_score: number;
     }>>`
       SELECT 
-        ROUND(COALESCE(SUM(oi.price + oi.freight_value), 0)::numeric, 2) as total_revenue,
-        COUNT(DISTINCT o.order_id) as total_orders,
-        COUNT(DISTINCT o.customer_id) as unique_customers,
-        ROUND(COALESCE(AVG(oi.price + oi.freight_value), 0)::numeric, 2) as avg_order_value,
-        ROUND(COALESCE(SUM(oi.freight_value), 0)::numeric, 2) as total_freight,
-        ROUND(COALESCE(AVG(
-          CASE 
-            WHEN o.delivered_date IS NOT NULL AND o.purchase_date IS NOT NULL 
-            THEN (TO_DATE(o.delivered_date, 'YYYY-MM-DD') - TO_DATE(o.purchase_date, 'YYYY-MM-DD'))::integer
-            ELSE NULL
-          END
-        ), 0)::numeric, 1) as avg_delivery_days,
-        ROUND(COALESCE(AVG(r.review_score), 0)::numeric, 1) as avg_review_score
-      FROM olist_orders o
-      LEFT JOIN olist_order_items oi ON o.order_id = oi.order_id
-      LEFT JOIN olist_order_reviews r ON o.order_id = r.order_id
-      WHERE o.order_status = 'delivered'
-        AND o.order_id IS NOT NULL
-        AND oi.order_id IS NOT NULL
+        ROUND(COALESCE(SUM("gross_value"), 0)::numeric, 2) as total_revenue,
+        COUNT(DISTINCT order_id) as total_orders,
+        COUNT(DISTINCT customer_id) as unique_customers,
+        ROUND(COALESCE(AVG("gross_value"), 0)::numeric, 2) as avg_order_value,
+        ROUND(COALESCE(SUM("Total_freight_value"), 0)::numeric, 2) as total_freight,
+        ROUND(COALESCE(AVG(duration_days), 0)::numeric, 1) as avg_delivery_days,
+        ROUND(COALESCE(AVG(review_score), 0)::numeric, 1) as avg_review_score
+      FROM "Olist_Final"
+      WHERE order_id IS NOT NULL
+        AND "Total_price" IS NOT NULL
+        AND "Total_freight_value" IS NOT NULL
     `;
 
     const repeatCustomerResult = await prisma.$queryRaw<Array<{ repeat_rate: number }>>`
@@ -90,7 +82,7 @@ export class DatabaseService {
         ) as repeat_rate
       FROM (
         SELECT customer_id, COUNT(*) as customer_order_count
-        FROM olist_orders
+        FROM "Olist_Final"
         WHERE customer_id IS NOT NULL
         GROUP BY customer_id
       ) customer_orders
@@ -119,20 +111,18 @@ export class DatabaseService {
       customers: number;
     }>>`
       SELECT 
-        TO_CHAR(TO_DATE(o.purchase_date, 'YYYY-MM-DD'), 'Mon YYYY') as month,
-        ROUND(COALESCE(SUM(oi.price + oi.freight_value), 0)::numeric, 0) as revenue,
-        COUNT(DISTINCT o.order_id) as orders,
-        COUNT(DISTINCT o.customer_id) as customers
-      FROM olist_orders o
-      LEFT JOIN olist_order_items oi ON o.order_id = oi.order_id
-      WHERE o.purchase_date IS NOT NULL 
-        AND o.order_status = 'delivered'
-        AND o.order_id IS NOT NULL
-        AND oi.order_id IS NOT NULL
-        AND TO_DATE(o.purchase_date, 'YYYY-MM-DD') >= '2017-01-01'
-        AND TO_DATE(o.purchase_date, 'YYYY-MM-DD') < '2019-01-01'
-      GROUP BY TO_CHAR(TO_DATE(o.purchase_date, 'YYYY-MM-DD'), 'YYYY-MM'), TO_CHAR(TO_DATE(o.purchase_date, 'YYYY-MM-DD'), 'Mon YYYY')
-      ORDER BY TO_CHAR(TO_DATE(o.purchase_date, 'YYYY-MM-DD'), 'YYYY-MM')
+        TO_CHAR(TO_DATE(purchase_date, 'YYYY-MM-DD'), 'Mon YYYY') as month,
+        ROUND(COALESCE(SUM("gross_value"), 0)::numeric, 0) as revenue,
+        COUNT(DISTINCT order_id) as orders,
+        COUNT(DISTINCT customer_id) as customers
+      FROM "Olist_Final"
+      WHERE purchase_date IS NOT NULL 
+        AND order_id IS NOT NULL
+        AND "gross_value" IS NOT NULL
+        AND TO_DATE(purchase_date, 'YYYY-MM-DD') >= '2017-01-01'
+        AND TO_DATE(purchase_date, 'YYYY-MM-DD') < '2019-01-01'
+      GROUP BY TO_CHAR(TO_DATE(purchase_date, 'YYYY-MM-DD'), 'YYYY-MM'), TO_CHAR(TO_DATE(purchase_date, 'YYYY-MM-DD'), 'Mon YYYY')
+      ORDER BY TO_CHAR(TO_DATE(purchase_date, 'YYYY-MM-DD'), 'YYYY-MM')
     `;
 
     return result.map(row => ({
@@ -151,17 +141,16 @@ export class DatabaseService {
       avg_order_value: number;
     }>>`
       SELECT 
-        COALESCE(p.product_category_en, 'Unknown') as category,
-        ROUND(COALESCE(SUM(oi.price + oi.freight_value), 0)::numeric, 2) as revenue,
-        COUNT(DISTINCT o.order_id) as orders,
-        ROUND(COALESCE(AVG(oi.price + oi.freight_value), 0)::numeric, 2) as avg_order_value
-      FROM olist_orders o
-      LEFT JOIN olist_order_items oi ON o.order_id = oi.order_id
-      LEFT JOIN olist_products p ON oi.product_id = p.product_id
-      WHERE o.order_status = 'delivered'
-        AND o.order_id IS NOT NULL
-        AND oi.order_id IS NOT NULL
-      GROUP BY p.product_category_en
+        COALESCE(product_category_en, 'Unknown') as category,
+        ROUND(COALESCE(SUM(\"Total_price\" + \"Total_freight_value\"), 0)::numeric, 2) as revenue,
+        COUNT(DISTINCT order_id) as orders,
+        ROUND(COALESCE(AVG(\"Total_price\" + \"Total_freight_value\"), 0)::numeric, 2) as avg_order_value
+      FROM \"Olist_Final\"
+      WHERE order_status = 'delivered'
+        AND order_id IS NOT NULL
+        AND \"Total_price\" IS NOT NULL
+        AND \"Total_freight_value\" IS NOT NULL
+      GROUP BY product_category_en
       ORDER BY revenue DESC
       LIMIT 20
     `;
@@ -182,17 +171,16 @@ export class DatabaseService {
       customers: number;
     }>>`
       SELECT 
-        COALESCE(c.customer_state, 'Unknown') as state,
-        ROUND(COALESCE(SUM(oi.price + oi.freight_value), 0)::numeric, 2) as revenue,
-        COUNT(DISTINCT o.order_id) as orders,
-        COUNT(DISTINCT o.customer_id) as customers
-      FROM olist_orders o
-      LEFT JOIN olist_order_items oi ON o.order_id = oi.order_id
-      LEFT JOIN olist_customers c ON o.customer_id = c.customer_id
-      WHERE o.order_status = 'delivered'
-        AND o.order_id IS NOT NULL
-        AND oi.order_id IS NOT NULL
-      GROUP BY c.customer_state
+        COALESCE(customer_state, 'Unknown') as state,
+        ROUND(COALESCE(SUM(\"Total_price\" + \"Total_freight_value\"), 0)::numeric, 2) as revenue,
+        COUNT(DISTINCT order_id) as orders,
+        COUNT(DISTINCT customer_id) as customers
+      FROM \"Olist_Final\"
+      WHERE order_status = 'delivered'
+        AND order_id IS NOT NULL
+        AND \"Total_price\" IS NOT NULL
+        AND \"Total_freight_value\" IS NOT NULL
+      GROUP BY customer_state
       ORDER BY revenue DESC
       LIMIT 20
     `;

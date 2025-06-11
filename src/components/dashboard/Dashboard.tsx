@@ -31,7 +31,7 @@ export function Dashboard() {
           <CardHeader>
             <CardDescription>Total Revenue</CardDescription>
             <CardTitle className="text-2xl">
-              {metrics ? `$${metrics.totalRevenue.toLocaleString()}` : "-"}
+              {metrics ? `BRL ${metrics.totalRevenue.toLocaleString()}` : "-"}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -45,7 +45,7 @@ export function Dashboard() {
         </Card>
         <Card>
           <CardHeader>
-            <CardDescription>Customers</CardDescription>
+            <CardDescription>Unique Customers in Period</CardDescription>
             <CardTitle className="text-2xl">
               {metrics ? metrics.uniqueCustomers.toLocaleString() : "-"}
             </CardTitle>
