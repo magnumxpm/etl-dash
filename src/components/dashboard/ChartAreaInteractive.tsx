@@ -14,14 +14,14 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { MonthlyTrend } from "@/types";
+import type { MonthlyTrend } from "@/types";
 
 interface ChartAreaInteractiveProps {
   data: MonthlyTrend[];
