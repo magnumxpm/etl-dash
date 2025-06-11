@@ -48,7 +48,12 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer config={chartConfig} className="h-[250px] w-full">
+        <ChartContainer
+          config={chartConfig}
+          width="100%"
+          height={250}
+          className="w-full"
+        >
           <AreaChart data={filteredData} stackOffset="expand">
             <defs>
               <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
