@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChartAreaInteractive } from "./ChartAreaInteractive";
-import { DashboardMetrics, MonthlyTrend } from "@/types";
+import type { DashboardMetrics, MonthlyTrend } from "@/types";
 import { fetchDashboardMetrics, fetchMonthlyTrends } from "@/data/dashboard";
 
 export function Dashboard() {

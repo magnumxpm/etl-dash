@@ -1,4 +1,4 @@
-import { DashboardMetrics, MonthlyTrend } from "@/types";
+import type { DashboardMetrics, MonthlyTrend } from "@/types";
 
 export async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
   return {
