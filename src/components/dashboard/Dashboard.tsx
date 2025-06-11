@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChartAreaInteractive } from "./ChartAreaInteractive";
-import { DashboardMetrics, MonthlyTrend } from "@/types";
+import type { DashboardMetrics, MonthlyTrend } from "@/types";
 import { fetchDashboardMetrics, fetchMonthlyTrends } from "@/data/dashboard";
 
 export function Dashboard() {
@@ -22,7 +22,10 @@ export function Dashboard() {
 
   return (
     <div className="container mx-auto py-8 space-y-6">
-      <h1 className="text-3xl font-semibold">Dashboard</h1>
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-1 h-8 bg-blue-500 rounded-full"></div>
+        <h1 className="text-3xl font-semibold text-blue-900 dark:text-blue-100">Dashboard</h1>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader>

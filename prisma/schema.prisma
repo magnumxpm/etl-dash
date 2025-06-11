@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Olist_Final {
+  order_id                    String?
+  customer_id                 String?
+  product_id                  String?
+  seller_id                   String?
+  order_status                String?
+  purchase_date               String?
+  purchase_time               String?
+  approved_date               String?
+  approved_time               String?
+  delivered_date              String?
+  delivered_time              String?
+  estimated_date              String?
+  estimated_time              String?
+  duration_days               Float?
+  duration_hours              Float?
+  delivery_delay_days         Float?
+  is_weekend_delivery         Boolean?
+  gross_value                 Float?
+  shipping_date               String?
+  shipping_time               String?
+  seller_city                 String?
+  seller_state                String?
+  product_weight_g            Int?
+  product_length_cm           Int?
+  product_height_cm           Int?
+  product_width_cm            Int?
+  product_category_en         String?
+  customer_city               String?
+  customer_state              String?
+  review_score                Int?
+  payment_sequential          Int?
+  payment_type                String?
+  payment_installments        Int?
+  payment_value               Float?
+  geolocation_zip_code_prefix String?
+  latitude                    Float?
+  longitude                   Float?
+  city                        String?
+  state                       String?
+  Total_price                 Float?
+  Total_freight_value         Float?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_customers {
+  customer_id              String?
+  customer_unique_id       String?
+  customer_zip_code_prefix String?
+  customer_city            String?
+  customer_state           String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_geographies {
+  geolocation_zip_code_prefix String?
+  latitude                    Float?
+  longitude                   Float?
+  city                        String?
+  state                       String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_order_items {
+  order_id      String?
+  order_item_id String?
+  product_id    String?
+  seller_id     String?
+  price         Float?
+  freight_value Float?
+  gross_value   Float?
+  shipping_date String?
+  shipping_time String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_order_payments {
+  order_id             String?
+  payment_sequential   Int?
+  payment_type         String?
+  payment_installments Int?
+  payment_value        Float?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_order_reviews {
+  order_id     String?
+  review_id    String?
+  review_score Int?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_orders {
+  order_id       String?
+  customer_id    String?
+  order_status   String?
+  purchase_date  String?
+  purchase_time  String?
+  approved_date  String?
+  approved_time  String?
+  delivered_date String?
+  delivered_time String?
+  estimated_date String?
+  estimated_time String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_products {
+  product_id          String?
+  product_weight_g    Int?
+  product_length_cm   Int?
+  product_height_cm   Int?
+  product_width_cm    Int?
+  product_category_en String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model olist_sellers {
+  seller_id              String?
+  seller_zip_code_prefix String?
+  seller_city            String?
+  seller_state           String?
+
+  @@ignore
+}
