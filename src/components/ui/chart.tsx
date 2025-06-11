@@ -30,7 +30,13 @@ export function ChartContainer({
     }
   }
   return (
-    <ResponsiveContainer className={cn(className)} style={style} {...props}>
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+      className={cn(className)}
+      style={style}
+      {...props}
+    >
       {children}
     </ResponsiveContainer>
   );
