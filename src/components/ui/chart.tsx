@@ -4,7 +4,6 @@ import {
   Tooltip as RechartsTooltip,
   Legend as RechartsLegend,
   type TooltipProps,
-  type LegendProps,
 } from "recharts";
 import { cn } from "@/lib/utils";
 
@@ -42,11 +41,11 @@ export function ChartContainer({
   );
 }
 
-export function ChartTooltip({ children, ...props }: TooltipProps<string, string>) {
-  return <RechartsTooltip {...props}>{children}</RechartsTooltip>;
+export function ChartTooltip(props: TooltipProps<string, string>) {
+  return <RechartsTooltip {...props} />;
 }
 
-export function ChartLegend(props: LegendProps) {
+export function ChartLegend(props: any) {
   return <RechartsLegend {...props} />;
 }
 
@@ -68,6 +67,7 @@ export function ChartLegendContent({ payload }: any) {
 
 export interface ChartTooltipContentProps extends TooltipProps<string, string> {
   labelFormatter?: (value: any) => React.ReactNode;
+  formatter?: (value: any, name: any) => [React.ReactNode, React.ReactNode];
   indicator?: "dot" | "line";
 }
 
@@ -75,6 +75,7 @@ export function ChartTooltipContent({
   label,
   payload,
   labelFormatter,
+  formatter,
 }: ChartTooltipContentProps) {
   if (!payload || !payload.length) return null;
   return (
@@ -83,15 +84,20 @@ export function ChartTooltipContent({
         {labelFormatter ? labelFormatter(label) : label}
       </div>
       <div className="grid gap-1">
-        {payload.map((item) => (
-          <div key={item.dataKey} className="flex items-center gap-2 text-sm">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: item.color }}
-            />
-            {item.name}: {item.value}
-          </div>
-        ))}
+        {payload.map((item) => {
+          const [formattedValue, formattedName] = formatter 
+            ? formatter(item.value, item.name)
+            : [item.value, item.name];
+          return (
+            <div key={item.dataKey} className="flex items-center gap-2 text-sm">
+              <span
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              {formattedName}: {formattedValue}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

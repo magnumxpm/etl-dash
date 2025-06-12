@@ -5,6 +5,8 @@ import {
   Area,
   CartesianGrid,
   XAxis,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 import {
   Card,
@@ -18,8 +20,6 @@ import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 import type { MonthlyTrend } from "@/types";
 
@@ -78,19 +78,17 @@ export function RevenueChart({ data }: ChartAreaInteractiveProps) {
                 })
               }}
             />
-            <ChartTooltip
-              content={<ChartTooltipContent
-                labelFormatter={(value) => {
-                  return new Date(value).toLocaleDateString("en-US", {
-                    month: "long",
-                    year: "numeric",
-                  })
-                }}
-                formatter={(value, name) => [
-                  `$${Number(value).toLocaleString()}`,
-                  name
-                ]}
-              />}
+            <Tooltip
+              formatter={(value: any, name: any) => [
+                `$${Number(value).toLocaleString()}`,
+                name
+              ]}
+              labelFormatter={(value: any) => {
+                return new Date(value).toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                })
+              }}
             />
             <Area
               dataKey="revenue"
@@ -153,19 +151,17 @@ export function VolumeChart({ data }: ChartAreaInteractiveProps) {
                 })
               }}
             />
-            <ChartTooltip
-              content={<ChartTooltipContent
-                labelFormatter={(value) => {
-                  return new Date(value).toLocaleDateString("en-US", {
-                    month: "long",
-                    year: "numeric",
-                  })
-                }}
-                formatter={(value, name) => [
-                  Number(value).toLocaleString(),
-                  name
-                ]}
-              />}
+            <Tooltip
+              formatter={(value: any, name: any) => [
+                Number(value).toLocaleString(),
+                name
+              ]}
+              labelFormatter={(value: any) => {
+                return new Date(value).toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                })
+              }}
             />
             <Area
               dataKey="orders"
